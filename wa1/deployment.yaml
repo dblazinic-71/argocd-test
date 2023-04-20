@@ -1,0 +1,144 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wa1-service
+  labels:
+    app: wa1
+spec:
+  ports:
+  - port: 8088
+    protocol: TCP
+    targetPort: http
+  type: ClusterIP
+  selector:
+    app: wa1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wa1-deployment
+  labels:
+    app: wa1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wa1
+  template:
+    metadata:
+      labels:
+        app: wa1
+    spec:
+      containers:
+      - name: wa1
+        image: localhost:5000/wa1
+        ports:
+        - name: http
+          containerPort: 5001
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wa1-ingress
+  #annotations:
+#  kubernetes.io/ingress.class: traefik  
+#  traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /wa1
+        pathType: Prefix
+        backend:
+          service:
+            name: wa1-service
+            port:
+              number: 8088
+#apiVersion: traefik.containo.us/v1alpha1
+#kind: IngressRoute
+#metadata:
+#  name: wa1-ingress
+#  annotations:
+#    kubernetes.io/ingress.class: traefik
+#    traefik.ingress.kubernetes.io/router.entrypoints: web
+#spec:
+#  entryPoints:
+#  - web
+#  routes:
+#  - match: Host(`localhost`) && PathPrefix(`/`)
+#    kind: Rule
+#    services:
+#    - name: wa1-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wa2-service
+  labels:
+    app: wa2
+spec:
+  ports:
+  - port: 8089
+    protocol: TCP
+    targetPort: http
+  type: ClusterIP
+  selector:
+    app: wa2
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wa2-deployment
+  labels:
+    app: wa2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wa2
+  template:
+    metadata:
+      labels:
+        app: wa2
+    spec:
+      containers:
+      - name: wa2
+        image: localhost:5000/wa2
+        ports:
+        - name: http
+          containerPort: 5068
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wa2-ingress
+  #annotations:
+#  kubernetes.io/ingress.class: traefik  
+#  traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /wa2
+        pathType: Prefix
+        backend:
+          service:
+            name: wa2-service
+            port:
+              number: 8089
+#---
+#apiVersion: traefik.containo.us/v1alpha1
+#kind: IngressRoute
+#metadata:
+#  name: wa2-ingress
+#  annotations:
+#    kubernetes.io/ingress.class: traefik
+#    traefik.ingress.kubernetes.io/router.entrypoints: web
+#spec:
+#  entryPoints:
+#  - web
+#  routes:
+#  - match: Host(`localhost`) && PathPrefix(`/`)
+#    kind: Rule
+#    services:
+#    - name: wa2-service

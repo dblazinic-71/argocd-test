@@ -1,0 +1,30 @@
+apiVersion: skaffold/v4beta3
+kind: Config
+metadata:
+  name: wa-
+build:
+  artifacts:
+  #    buildpacks:
+  #      builder: gcr.io/buildpacks/builder:v1
+  #    context: .
+  #    sync:
+  #      auto: true
+  - image: wa1
+    #  - image: gcr.io/k8s-skaffold/skaffold-debug-support/netcore
+    docker:
+      dockerfile: Dockerfile
+    context: .
+  - image: wa2
+    context: ../wa2
+    docker:
+      dockerfile: ../wa2/Dockerfile
+manifests:
+  rawYaml:
+  - deployment.yaml
+portForward:
+- resourceType: service
+  resourceName: wa1-service
+  port: 8088
+- resourceType: service
+  resourceName: wa2-service
+  port: 8089

@@ -1,0 +1,30 @@
+apiVersion: skaffold/v4beta4
+kind: Config
+metadata:
+  name: wa-
+build:
+  artifacts:
+  - image: 'localhost:5000/wa1'
+    context: wa1
+    docker:
+      dockerfile: Dockerfile
+  - image: 'localhost:5000/wa2'
+    context: wa2
+    docker:
+      dockerfile: Dockerfile
+  #  - image: wa2
+  #    context: wa1
+  #    docker:
+  #      dockerfile: Dockerfile
+  tagPolicy:
+    sha256: {}
+manifests:
+  rawYaml:
+  - wa1/deployment.yaml
+# portForward:
+# - resourceType: service
+#   resourceName: wa1-service
+#   port: 8088
+# - resourceType: service
+#   resourceName: wa2-service
+#   port: 8089

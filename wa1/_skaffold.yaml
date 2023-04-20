@@ -1,0 +1,25 @@
+apiVersion: skaffold/v4beta3
+kind: Config
+metadata:
+  name: wa-
+build:
+  artifacts:
+  - image: quay.io/amorgant/server-debug
+    buildpacks:
+      builder: gcr.io/buildpacks/builder:v1
+    context: .
+    sync:
+      auto: true
+  - image: wa1
+    context: .
+    #    buildpacks:
+    #      builder: gcr.io/buildpacks/builder:v1
+    docker:
+      dockerfile: Dockerfile
+manifests:
+  rawYaml:
+  - deployment.yaml
+portForward:
+- resourceType: service
+  resourceName: wa1
+  port: 8088
